@@ -3,18 +3,21 @@ import matplotlib.pyplot as plt
 x0 = 0
 v0 = 5
 
-
-def EulerSpring(x0, v0, N, h):
+def explicit(x0, v0, N, h):
     time = np.arange(0, N, h)
-    velocity = np.empty(len(time))
     distance = np.empty(len(time))
+    velocity = np.empty(len(time))
 
-    velocity[0] = v0
     distance[0] = x0
+    velocity[0] = v0
 
     for i in range(1, len(time)):
-        velocity[i] = dv_dt(distance[i - 1], velocity[i - 1], h)
         distance[i] = dx_dt(distance[i - 1], velocity[i - 1], h)
+        velocity[i] = dv_dt(distance[i - 1], velocity[i - 1], h)
+    return distance, velocity, time
+
+def EulerSpringExplicit(x0, v0, N, h):
+    distance, velocity, time = explicit(x0, v0, N, h)
     plotPosition(distance, time)
     plotVelocity(velocity, time)
 
@@ -39,20 +42,14 @@ def plotVelocity(velocity, time):
     plt.show()
 
 def globalError(x0, v0, N, h):
-    time = np.arange(0, N, h)
+    distance, velocity, time = explicit(x0, v0, N, h)
     vel_error = np.empty(len(time))
     dist_error = np.empty(len(time))
-    velocity = np.empty(len(time))
-    distance = np.empty(len(time))
 
-    velocity[0] = v0
-    distance[0] = x0
     vel_error[0] = 0
     dist_error[0] = 0
 
     for i in range(1, len(time)):
-        velocity[i] = dv_dt(distance[i - 1], velocity[i - 1], h)
-        distance[i] = dx_dt(distance[i - 1], velocity[i - 1], h)
         vel_error[i] = np.abs(v0 * np.cos(time[i]) - velocity[i])
         dist_error[i] = np.abs(v0 * np.sin(time[i]) - distance[i])
 
@@ -70,18 +67,10 @@ def truncation(x0, v0, N, h0):
     max_error = np.empty(len(h))
 
     for n in range(len(h)):
-        time = np.arange(0, N, h[n])
-        dist_error = np.empty(len(time))
-        velocity = np.empty(len(time))
-        distance = np.empty(len(time))
-
-        velocity[0] = v0
-        distance[0] = x0
+        time = explicit(x0, v0, N, h[n])
         dist_error[0] = 0
 
         for i in range(1, len(time)):
-            velocity[i] = dv_dt(distance[i - 1], velocity[i - 1], h[n])
-            distance[i] = dx_dt(distance[i - 1], velocity[i - 1], h[n])
             dist_error[i] = np.abs(v0 * np.sin(time[i]) - distance[i])
 
         max_error[n] = dist_error[-1]
@@ -94,20 +83,13 @@ def truncation(x0, v0, N, h0):
 
 
 def energy(x0, v0, N, h):
-        time = np.arange(0, N, h)
-        velocity = np.empty(len(time))
-        distance = np.empty(len(time))
+        distance, velocity, time = explicit(x0, v0, N, h)
         energy = np.empty(len(time))
 
-        velocity[0] = v0
-        distance[0] = x0
         energy[0] = v0**2 + x0**2
 
         for i in range(1, len(time)):
-            velocity[i] = dv_dt(distance[i - 1], velocity[i - 1], h)
-            distance[i] = dx_dt(distance[i - 1], velocity[i - 1], h)
             energy[i] = velocity[i]**2 + distance[i]**2
-
 
         plt.plot(time, energy)
         plt.xlabel('Energy')
@@ -123,35 +105,38 @@ def vi1(xi, vi, h):
 
 def implicit(x0, v0, N, h):
     time = np.arange(0, N, h)
-    velocity = np.empty(len(time))
     distance = np.empty(len(time))
+    velocity = np.empty(len(time))
+
+    distance[0] = x0
+    velocity[0] = v0
+
+    for i in range(1, len(time)):
+        distance[i] = xi1(distance[i - 1], velocity[i - 1], h)
+        velocity[i] = vi1(distance[i - 1], velocity[i - 1], h)
+    return distance, velocity, time
+
+
+def EulerSpringImplicit(x0, v0, N, h):
+    distance, velocity, time = explicit(x0, v0, N, h)
     energy = np.empty(len(time))
     dist_error = np.empty(len(time))
 
-    velocity[0] = v0
-    distance[0] = x0
     energy[0] = v0**2 + x0**2
     dist_error[0] = 0
 
     for i in range(1, len(time)):
-        velocity[i] = dv_dt(distance[i - 1], velocity[i - 1], h)
-        distance[i] = dx_dt(distance[i - 1], velocity[i - 1], h)
         energy[i] = velocity[i]**2 + distance[i]**2
         dist_error[i] = np.abs(v0 * np.sin(time[i]) - distance[i])
 
-    velocity_i = np.empty(len(time))
-    distance_i = np.empty(len(time))
+    distance_i, velocity_i, time = implicit(x0, v0, N, h)
     energy_i = np.empty(len(time))
     dist_error_i = np.empty(len(time))
 
-    velocity_i[0] = v0
-    distance_i[0] = x0
     energy_i[0] = v0**2 + x0**2
     dist_error_i[0] = 0
 
     for i in range(1, len(time)):
-        velocity_i[i] = vi1(distance_i[i - 1], velocity_i[i - 1], h)
-        distance_i[i] = xi1(distance_i[i - 1], velocity_i[i - 1], h)
         energy_i[i] = velocity_i[i]**2 + distance_i[i]**2
         dist_error_i[i] = np.abs(v0 * np.sin(time[i]) - distance_i[i])
 
@@ -173,32 +158,17 @@ def implicit(x0, v0, N, h):
 
 
 def phaseSpace(x0, v0, N, h ):
-    time = np.arange(0, N, h)
-    velocity = np.empty(len(time))
-    distance = np.empty(len(time))
+    distance, velocity, time = explicit(x0, v0, N, h)
+    distance_i, velocity_i, time = implicit(x0, v0, N, h)
     trueVel = np.empty(len(time))
     trueDist = np.empty(len(time))
 
-    velocity[0] = v0
-    distance[0] = x0
     trueVel[0] = v0
     trueDist[0] = x0
 
     for i in range(1, len(time)):
-        velocity[i] = dv_dt(distance[i - 1], velocity[i - 1], h)
-        distance[i] = dx_dt(distance[i - 1], velocity[i - 1], h)
         trueVel[i] = v0 * np.cos(time[i])
         trueDist[i] = v0 * np.sin(time[i])
-
-    velocity_i = np.empty(len(time))
-    distance_i = np.empty(len(time))
-
-    velocity_i[0] = v0
-    distance_i[0] = x0
-
-    for i in range(1, len(time)):
-        velocity_i[i] = vi1(distance_i[i - 1], velocity_i[i - 1], h)
-        distance_i[i] = xi1(distance_i[i - 1], velocity_i[i - 1], h)
 
     plt.plot(distance, velocity, label='Explict')
     plt.plot(trueDist, trueVel, label='True')
@@ -225,35 +195,32 @@ def symp_v(xi, vi, h):
 
 def symplectic(x0, v0, N, h):
     time = np.arange(0, N, h)
-    velocity_s = np.empty(len(time))
-    distance_s = np.empty(len(time))
+    distance = np.empty(len(time))
+    velocity = np.empty(len(time))
 
-    velocity_s[0] = v0
     distance_s[0] = x0
+    velocity_s[0] = v0
 
     for i in range(1, len(time)):
-        velocity_s[i] = symp_v(distance_s[i - 1], velocity_s[i - 1], h)
-        distance_s[i] = symp_x(distance_s[i - 1], velocity_s[i - 1], h)
+        distance[i] = symp_x(distance[i - 1], velocity[i - 1], h)
+        velocity[i] = symp_v(distance[i - 1], velocity[i - 1], h)
 
-    plt.plot(distance_s, velocity_s)
+def EulerSpringSymplectic(x0, v0, N, h):
+    distance, velocity, time = symplectic(x0, v0, N, h)
+
+    plt.plot(distance, velocity)
     plt.xlabel('Distance')
     plt.ylabel('Velocity')
     plt.title('Symplectic Euler Method - Phase Space')
     plt.show()
 
 def sympEnergy(x0, v0, N, h):
-    time = np.arange(0, N, h)
-    velocity_s = np.empty(len(time))
-    distance_s = np.empty(len(time))
+    distance_s, velocity_s, time = symplectic(x0, v0, N, h)
     energy_s = np.empty(len(time))
 
-    velocity_s[0] = v0
-    distance_s[0] = x0
     energy_s[0] = v0**2 + x0**2
 
     for i in range(1, len(time)):
-        velocity_s[i] = symp_v(distance_s[i - 1], velocity_s[i - 1], h)
-        distance_s[i] = symp_x(distance_s[i - 1], velocity_s[i - 1], h)
         energy_s[i] = velocity_s[i]**2 + distance_s[i]**2
 
 
