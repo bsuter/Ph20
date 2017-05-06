@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import sys
+
 x0 = 0
 v0 = 5
 
@@ -16,10 +18,12 @@ def explicit(x0, v0, N, h):
         velocity[i] = dv_dt(distance[i - 1], velocity[i - 1], h)
     return distance, velocity, time
 
-def EulerSpringExplicit(x0, v0, N, h):
+def EulerSpringExplicit(x0, v0, N, h, plot):
     distance, velocity, time = explicit(x0, v0, N, h)
-    plotPosition(distance, time)
-    plotVelocity(velocity, time)
+    if plot == 'dist':
+        plotPosition(distance, time)
+    if plot == 'vel'
+        plotVelocity(velocity, time)
 
 def dv_dt(x, v, h):
     return v - h * x
@@ -117,7 +121,7 @@ def implicit(x0, v0, N, h):
     return distance, velocity, time
 
 
-def EulerSpringImplicit(x0, v0, N, h):
+def EulerSpringImplicit(x0, v0, N, h, plot):
     distance, velocity, time = explicit(x0, v0, N, h)
     energy = np.empty(len(time))
     dist_error = np.empty(len(time))
@@ -140,24 +144,25 @@ def EulerSpringImplicit(x0, v0, N, h):
         energy_i[i] = velocity_i[i]**2 + distance_i[i]**2
         dist_error_i[i] = np.abs(v0 * np.sin(time[i]) - distance_i[i])
 
+    if plot == 'error':
+        plt.plot(time, dist_error, label='Explicit')
+        plt.plot(time, dist_error_i, label='Implicit')
+        plt.xlabel('Time')
+        plt.ylabel('Amount of Error')
+        plt.title('Global Error Comparison')
+        plt.show()
 
-    plt.plot(time, dist_error, label='Explicit')
-    plt.plot(time, dist_error_i, label='Implicit')
-    plt.xlabel('Time')
-    plt.ylabel('Amount of Error')
-    plt.title('Global Error Comparison')
-    plt.show()
-
-    plt.plot(time, energy, label='Explicit')
-    plt.plot(time, energy_i, label='Implicit')
-    plt.xlabel('Time')
-    plt.ylabel('Energy')
-    plt.title('Energy Comparison')
-    plt.show()
+    if plot == 'energy':
+        plt.plot(time, energy, label='Explicit')
+        plt.plot(time, energy_i, label='Implicit')
+        plt.xlabel('Time')
+        plt.ylabel('Energy')
+        plt.title('Energy Comparison')
+        plt.show()
 
 
 
-def phaseSpace(x0, v0, N, h ):
+def phaseSpace(x0, v0, N, h , plot):
     distance, velocity, time = explicit(x0, v0, N, h)
     distance_i, velocity_i, time = implicit(x0, v0, N, h)
     trueVel = np.empty(len(time))
@@ -170,21 +175,23 @@ def phaseSpace(x0, v0, N, h ):
         trueVel[i] = v0 * np.cos(time[i])
         trueDist[i] = v0 * np.sin(time[i])
 
-    plt.plot(distance, velocity, label='Explict')
-    plt.plot(trueDist, trueVel, label='True')
-    plt.xlabel('Distance')
-    plt.ylabel('Velocity')
-    plt.title('Explicit Euler Method - Phase Space')
-    plt.legend()
-    plt.show()
+    if plot == 'dist':
+        plt.plot(distance, velocity, label='Explict')
+        plt.plot(trueDist, trueVel, label='True')
+        plt.xlabel('Distance')
+        plt.ylabel('Velocity')
+        plt.title('Explicit Euler Method - Phase Space')
+        plt.legend()
+        plt.show()
 
-    plt.plot(distance_i, velocity_i, label='Implicit')
-    plt.plot(trueDist, trueVel, label='True')
-    plt.xlabel('Distance')
-    plt.ylabel('Velocity')
-    plt.title('Implicit Euler Method - Phase Space')
-    plt.legend()
-    plt.show()
+    if plot == 'vel':
+        plt.plot(distance_i, velocity_i, label='Implicit')
+        plt.plot(trueDist, trueVel, label='True')
+        plt.xlabel('Distance')
+        plt.ylabel('Velocity')
+        plt.title('Implicit Euler Method - Phase Space')
+        plt.legend()
+        plt.show()
 
 def symp_x(xi, vi, h):
     return xi + h * vi
@@ -223,14 +230,36 @@ def sympEnergy(x0, v0, N, h):
     for i in range(1, len(time)):
         energy_s[i] = velocity_s[i]**2 + distance_s[i]**2
 
-
     plt.plot(time, energy_s)
     plt.xlabel('Energy')
     plt.ylabel('Time')
     plt.title('Symplectic Euler Energy')
     plt.show()
 
-
+def main(sys.argv):
+    x0 = 0
+    v0 = 5
+    N = 10
+    h = 0.01
+    if sys.argv[0] == 'explicit':
+        EulerSpringExplicit(x0, v0, N, h, sys.argv[1])
+    elif sys.argv[0] == 'error':
+        globalError(x0, v0, N, h)
+    elif sys.argv[0] == 'truncation':
+        truncation(x0, v0, N, h0)
+    elif sys.argv[0] == 'energy':
+        energy(x0, v0, N, h)
+    elif sys.argv[0] == 'implicit':
+        EulerSpringImplicit(x0, v0, N, h, sys.argv[1])
+    elif sys.argv[0] == 'phaseSpace':
+        phaseSpace(x0, v0, N, h , sys.argv[1])
+    elif sys.argv[0] == 'symplectic':
+        EulerSpringSymplectic(x0, v0, N, h)
+    else sys.argv[0] == 'sympEnergy':
+        sympEnergy(x0, v0, N, h)
+        
+if __name__ == '__main__':
+    main()
 
 
 
