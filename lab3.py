@@ -36,14 +36,14 @@ def plotPosition(distance, time):
     plt.xlabel('Time')
     plt.ylabel('Position')
     plt.title('Explicit Euler Method for Position')
-    plt.show()
+    plt.savefig('figure_1.png')
 
 def plotVelocity(velocity, time):
     plt.plot(time, velocity, '-', label='Velocity')
     plt.xlabel('Time')
     plt.ylabel('Velocity')
     plt.title('Explicit Euler Method for Velocity')
-    plt.show()
+    plt.savefig('figure_2.png')
 
 def globalError(x0, v0, N, h):
     distance, velocity, time = explicit(x0, v0, N, h)
@@ -63,7 +63,7 @@ def globalError(x0, v0, N, h):
     plt.ylabel('Magnitude')
     plt.title('Explicit Euler Error for Velocity and Position')
     plt.legend()
-    plt.show()
+    plt.savefig('figure_3.png')
 
 
 def truncation(x0, v0, N, h0):
@@ -83,7 +83,7 @@ def truncation(x0, v0, N, h0):
     plt.xlabel('h in terms of h0 = ' + str(h0))
     plt.ylabel('Maximum Error of Position')
     plt.title('Explicit Euler Error Vs h')
-    plt.show()
+    plt.savefig('figure_4.png')
 
 
 def energy(x0, v0, N, h):
@@ -99,7 +99,7 @@ def energy(x0, v0, N, h):
         plt.xlabel('Energy')
         plt.ylabel('Time')
         plt.title('Explicit Euler Energy')
-        plt.show()
+        plt.savefig('figure_5.png')
 
 def xi1(xi, vi, h):
     return (vi / h) * (1 - 1 / (h**2 + 1)) + (xi / (h**2 + 1))
@@ -150,7 +150,7 @@ def EulerSpringImplicit(x0, v0, N, h, plot):
         plt.xlabel('Time')
         plt.ylabel('Amount of Error')
         plt.title('Global Error Comparison')
-        plt.show()
+        plt.savefig('figure_6.png')
 
     if plot == 'energy':
         plt.plot(time, energy, label='Explicit')
@@ -158,7 +158,7 @@ def EulerSpringImplicit(x0, v0, N, h, plot):
         plt.xlabel('Time')
         plt.ylabel('Energy')
         plt.title('Energy Comparison')
-        plt.show()
+        plt.savefig('figure_7.png')
 
 
 
@@ -182,7 +182,7 @@ def phaseSpace(x0, v0, N, h , plot):
         plt.ylabel('Velocity')
         plt.title('Explicit Euler Method - Phase Space')
         plt.legend()
-        plt.show()
+        plt.savefig('figure_8.png')
 
     if plot == 'vel':
         plt.plot(distance_i, velocity_i, label='Implicit')
@@ -191,7 +191,7 @@ def phaseSpace(x0, v0, N, h , plot):
         plt.ylabel('Velocity')
         plt.title('Implicit Euler Method - Phase Space')
         plt.legend()
-        plt.show()
+        plt.savefig('figure_9.png')
 
 def symp_x(xi, vi, h):
     return xi + h * vi
@@ -219,7 +219,7 @@ def EulerSpringSymplectic(x0, v0, N, h):
     plt.xlabel('Distance')
     plt.ylabel('Velocity')
     plt.title('Symplectic Euler Method - Phase Space')
-    plt.show()
+    plt.savefig('figure_10.png')
 
 def sympEnergy(x0, v0, N, h):
     distance_s, velocity_s, time = symplectic(x0, v0, N, h)
@@ -234,7 +234,7 @@ def sympEnergy(x0, v0, N, h):
     plt.xlabel('Energy')
     plt.ylabel('Time')
     plt.title('Symplectic Euler Energy')
-    plt.show()
+    plt.savefig('figure_11.png')
 
 def main(sys.argv):
     x0 = 0
@@ -257,7 +257,7 @@ def main(sys.argv):
         EulerSpringSymplectic(x0, v0, N, h)
     else sys.argv[0] == 'sympEnergy':
         sympEnergy(x0, v0, N, h)
-        
+
 if __name__ == '__main__':
     main()
 
