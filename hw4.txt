@@ -1,0 +1,29 @@
+commit 098cc696ab16d69902644a4bcaa0756d89e1d84c
+Author: Bethany Suter <bsuter@caltech.edu>
+Date:   Sat May 6 00:17:48 2017 -0700
+
+    first commit of the makefile
+
+commit e9f2a01586fed50d6c1d5184324351c76cebc697
+Author: Bethany Suter <bsuter@caltech.edu>
+Date:   Sat May 6 00:16:22 2017 -0700
+
+    Made the code fine to print the images
+
+commit 8064fc6cf2c1d517f7689e8b5484c349648f2498
+Author: Bethany Suter <bsuter@caltech.edu>
+Date:   Fri May 5 23:58:49 2017 -0700
+
+    Made the code fine for the makefile assignment
+
+commit 2b40ae7e4da3b4558e90bf04c8bb89cc5a284d57
+Author: Bethany Suter <bsuter@caltech.edu>
+Date:   Fri May 5 23:00:36 2017 -0700
+
+    Made the code more concise
+
+commit 4a67d6ae887193098b244a8a9b93619f9a37cbea
+Author: Bethany Suter <bsuter@caltech.edu>
+Date:   Fri May 5 22:27:17 2017 -0700
+
+    Original version of Ph20.3
